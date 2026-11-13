@@ -10,7 +10,7 @@ from starlette.requests import Request
 
 from app.config import settings
 from app.database import Base, engine, SessionLocal
-from app.models import Incident
+from app.models.incident import Incident
 from app.routes import incidents, health
 
 
@@ -23,7 +23,7 @@ templates = Jinja2Templates(
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Development initialization.
+    # Initial MVP convenience.
     # Replace with Alembic migrations for production.
     Base.metadata.create_all(bind=engine)
     yield
@@ -35,11 +35,16 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-app.mount(
-    "/static",
-    StaticFiles(directory=str(BASE_DIR / "static")),
-    name="static"
-)
+
+STATIC_DIR = BASE_DIR / "static"
+
+if STATIC_DIR.exists():
+    app.mount(
+        "/static",
+        StaticFiles(directory=str(STATIC_DIR)),
+        name="static"
+    )
+
 
 app.include_router(incidents.router)
 app.include_router(health.router)
@@ -47,18 +52,24 @@ app.include_router(health.router)
 
 @app.get("/", response_class=HTMLResponse)
 def dashboard(request: Request):
+
     with SessionLocal() as db:
+
         records = db.query(Incident).order_by(
             Incident.created_at.desc()
         ).all()
 
         stats = {
             "total": len(records),
-            "open": sum(i.status == "Open" for i in records),
+            "open": sum(
+                i.status == "Open" for i in records
+            ),
             "investigating": sum(
                 i.status == "Investigating" for i in records
             ),
-            "resolved": sum(i.status == "Resolved" for i in records),
+            "resolved": sum(
+                i.status == "Resolved" for i in records
+            ),
         }
 
         return templates.TemplateResponse(
