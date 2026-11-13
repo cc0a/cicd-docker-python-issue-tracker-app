@@ -1,4 +1,6 @@
 
+from contextlib import asynccontextmanager
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -32,11 +34,21 @@ def client():
         finally:
             db.close()
 
+    @asynccontextmanager
+    async def test_lifespan(application):
+        yield
+
+    original_lifespan = app.router.lifespan_context
+
+    app.router.lifespan_context = test_lifespan
     app.dependency_overrides[get_db] = override_get_db
 
-    with TestClient(app) as test_client:
-        yield test_client
+    try:
+        with TestClient(app) as test_client:
+            yield test_client
+    finally:
+        app.dependency_overrides.clear()
+        app.router.lifespan_context = original_lifespan
 
-    app.dependency_overrides.clear()
-    Base.metadata.drop_all(bind=engine)
-    engine.dispose()
+        Base.metadata.drop_all(bind=engine)
+        engine.dispose()

@@ -1,8 +1,10 @@
 
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.requests import Request
 
@@ -12,13 +14,17 @@ from app.models import Incident
 from app.routes import incidents, health
 
 
-templates = Jinja2Templates(directory="app/templates")
+BASE_DIR = Path(__file__).resolve().parent
+
+templates = Jinja2Templates(
+    directory=str(BASE_DIR / "templates")
+)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Development convenience only.
-    # Use Alembic migrations for production.
+    # Development initialization.
+    # Replace with Alembic migrations for production.
     Base.metadata.create_all(bind=engine)
     yield
 
@@ -27,6 +33,12 @@ app = FastAPI(
     title=settings.app_name,
     version="0.1.0",
     lifespan=lifespan
+)
+
+app.mount(
+    "/static",
+    StaticFiles(directory=str(BASE_DIR / "static")),
+    name="static"
 )
 
 app.include_router(incidents.router)
