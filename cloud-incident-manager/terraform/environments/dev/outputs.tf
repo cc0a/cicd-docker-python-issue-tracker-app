@@ -27,3 +27,13 @@ output "ubuntu_ami" {
   description = "Ubuntu AMI selected by Terraform"
   value       = data.aws_ami.ubuntu.id
 }
+
+output "app_port" {
+  description = "Random application port"
+  value       = random_integer.app_port.result
+}
+
+output "ssh_command" {
+  description = "SSH command for connecting to EC2"
+  value       = "ssh -i /home/snow/.ssh/id_rsa ubuntu@${aws_instance.app.public_ip}"
+}

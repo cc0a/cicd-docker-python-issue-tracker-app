@@ -1,0 +1,60 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Operations Dashboard</h2>
+
+<div class="stats">
+    <div class="card">
+        <h3>Total Incidents</h3>
+        <p>{{ stats.total }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Open</h3>
+        <p>{{ stats.open }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Investigating</h3>
+        <p>{{ stats.investigating }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Resolved</h3>
+        <p>{{ stats.resolved }}</p>
+    </div>
+</div>
+
+<h2>Recent Incidents</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Severity</th>
+            <th>Status</th>
+            <th>Assigned To</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for incident in incidents %}
+        <tr>
+            <td>{{ incident.id }}</td>
+            <td>{{ incident.title }}</td>
+            <td>{{ incident.severity }}</td>
+            <td>{{ incident.status }}</td>
+            <td>{{ incident.assigned_to or "Unassigned" }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="5">No incidents have been created.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

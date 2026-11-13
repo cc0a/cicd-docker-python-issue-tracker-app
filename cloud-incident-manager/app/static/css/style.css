@@ -1,0 +1,52 @@
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f4f6f9;
+    color: #202938;
+}
+
+header {
+    background: #17243a;
+    color: white;
+    padding: 20px 40px;
+}
+
+header nav a {
+    color: white;
+    margin-right: 20px;
+    text-decoration: none;
+}
+
+main {
+    padding: 30px 40px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.card p {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+table {
+    width: 100%;
+    background: white;
+    border-collapse: collapse;
+}
+
+th, td {
+    text-align: left;
+    padding: 14px;
+    border-bottom: 1px solid #ddd;
+}
