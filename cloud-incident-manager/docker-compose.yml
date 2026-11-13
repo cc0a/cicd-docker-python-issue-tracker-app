@@ -1,32 +1,28 @@
-
 services:
   app:
-    build: .
-    container_name: incident-manager
-    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: cloud-incident-manager
+
     ports:
       - "8000:8000"
-    environment:
-      DATABASE_URL: postgresql+psycopg://incident:${DB_PASSWORD}@db:5432/incidents
-    depends_on:
-      db:
-        condition: service_healthy
 
-  db:
-    image: postgres:16
-    container_name: incident-db
-    restart: unless-stopped
     environment:
-      POSTGRES_USER: incident
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: incidents
+      DATABASE_URL: sqlite:////app/data/incidents.db
+
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - incident_data:/app/data
+
+    restart: unless-stopped
+
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U incident -d incidents"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
 volumes:
-  postgres_data:
+  incident_data:
