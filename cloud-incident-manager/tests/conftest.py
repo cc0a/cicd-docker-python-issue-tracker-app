@@ -1,4 +1,3 @@
-
 from contextlib import asynccontextmanager
 
 import pytest
@@ -14,16 +13,10 @@ from app.main import app
 @pytest.fixture
 def client():
     engine = create_engine(
-        "sqlite://",
-        connect_args={"check_same_thread": False},
-        poolclass=StaticPool
+        "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
     )
 
-    TestingSession = sessionmaker(
-        bind=engine,
-        autoflush=False,
-        autocommit=False
-    )
+    TestingSession = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
     Base.metadata.create_all(bind=engine)
 

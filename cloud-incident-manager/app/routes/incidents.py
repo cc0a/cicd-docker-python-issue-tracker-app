@@ -1,40 +1,32 @@
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.schemas.incident import (
-    IncidentCreate,
-    IncidentUpdate,
-    IncidentResponse
-)
+from app.schemas.incident import IncidentCreate, IncidentResponse, IncidentUpdate
 from app.services import incident_service
 
+DbSession = Annotated[Session, Depends(get_db)]
 
 router = APIRouter(prefix="/api/incidents", tags=["Incidents"])
 
 
 @router.post("/", response_model=IncidentResponse, status_code=201)
-def create_incident(
-    data: IncidentCreate,
-    db: Session = Depends(get_db)
-):
+def create_incident(data: IncidentCreate, db: DbSession):
     try:
         return incident_service.create_incident(db, data)
     except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc))
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
 @router.get("/", response_model=list[IncidentResponse])
-def list_incidents(db: Session = Depends(get_db)):
+def list_incidents(db: DbSession):
     return incident_service.get_incidents(db)
 
 
 @router.get("/{incident_id}", response_model=IncidentResponse)
-def read_incident(
-    incident_id: int,
-    db: Session = Depends(get_db)
-):
+def read_incident(incident_id: int, db: DbSession):
     incident = incident_service.get_incident(db, incident_id)
 
     if not incident:
@@ -44,11 +36,7 @@ def read_incident(
 
 
 @router.patch("/{incident_id}", response_model=IncidentResponse)
-def update_incident(
-    incident_id: int,
-    data: IncidentUpdate,
-    db: Session = Depends(get_db)
-):
+def update_incident(incident_id: int, data: IncidentUpdate, db: DbSession):
     incident = incident_service.get_incident(db, incident_id)
 
     if not incident:
@@ -57,4 +45,4 @@ def update_incident(
     try:
         return incident_service.update_incident(db, incident, data)
     except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc))
+        raise HTTPException(status_code=400, detail=str(exc)) from exc

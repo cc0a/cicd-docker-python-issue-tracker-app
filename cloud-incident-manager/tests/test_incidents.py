@@ -1,12 +1,11 @@
-
 def test_create_incident(client):
     response = client.post(
         "/api/incidents/",
         json={
             "title": "EC2 instance unavailable",
             "description": "Application server stopped responding",
-            "severity": "High"
-        }
+            "severity": "High",
+        },
     )
 
     assert response.status_code == 201
@@ -24,8 +23,8 @@ def test_invalid_severity(client):
         json={
             "title": "Test incident",
             "description": "Testing invalid severity",
-            "severity": "Extreme"
-        }
+            "severity": "Extreme",
+        },
     )
 
     assert response.status_code == 400
