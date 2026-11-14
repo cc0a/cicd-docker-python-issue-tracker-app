@@ -22,5 +22,3 @@ def database_health():
 
     except SQLAlchemyError:
         return {"status": "error", "database": "unavailable"}
-
-# Let's GO!
