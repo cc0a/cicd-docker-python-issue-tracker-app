@@ -1,0 +1,204 @@
+
+############################################
+# PYTHON
+############################################
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python build artifacts
+build/
+dist/
+*.egg
+*.egg-info/
+.eggs/
+
+# Python virtual environments
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# Python packaging
+pip-wheel-metadata/
+
+
+############################################
+# ENVIRONMENT VARIABLES AND SECRETS
+############################################
+
+.env
+.env.*
+!.env.example
+
+# Private keys and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+
+# SSH keys
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+
+# Credential files
+credentials
+credentials.json
+secrets.json
+
+
+############################################
+# DATABASES AND LOCAL DATA
+############################################
+
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# Local database directories
+data/
+local-data/
+
+
+############################################
+# PYTHON TESTING AND COVERAGE
+############################################
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+
+.coverage
+.coverage.*
+htmlcov/
+
+test-results/
+coverage.xml
+
+
+############################################
+# LOGS AND TEMPORARY FILES
+############################################
+
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
+
+############################################
+# DOCKER
+############################################
+
+# Local Docker override files
+docker-compose.override.yml
+compose.override.yaml
+
+# Local Docker build artifacts
+.docker/
+
+
+############################################
+# TERRAFORM
+############################################
+
+# Terraform working directory
+**/.terraform/*
+
+# Terraform state
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Terraform plans
+*.tfplan
+*.plan
+
+# Terraform crash logs
+crash.log
+crash.*.log
+
+# Terraform variable files may contain secrets
+*.tfvars
+*.tfvars.json
+
+# Override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Terraform CLI configuration
+.terraformrc
+terraform.rc
+
+
+############################################
+# IDE AND EDITOR FILES
+############################################
+
+.vscode/
+.idea/
+*.code-workspace
+
+# Vim
+*.swp
+*.swo
+
+# JetBrains
+*.iml
+
+
+############################################
+# OPERATING SYSTEM FILES
+############################################
+
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+Desktop.ini
+
+
+############################################
+# NODE.JS (IF USED FOR FUTURE FRONTEND WORK)
+############################################
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+
+############################################
+# GENERATED APPLICATION FILES
+############################################
+
+instance/
+staticfiles/
+.cache/
+
+
+############################################
+# LOCAL DEVELOPMENT CONFIGURATION
+############################################
+
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
