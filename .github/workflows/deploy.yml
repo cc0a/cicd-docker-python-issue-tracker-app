@@ -55,7 +55,7 @@ jobs:
           set -euo pipefail
 
           cat > /tmp/deploy-command.sh <<SCRIPT
-          set -euo pipefail
+          set -eu
           export APP_PORT="${APP_PORT}"
           export IMAGE_TAG="${IMAGE_TAG}"
 
