@@ -1,3 +1,4 @@
+
 name: Deploy Cloud Incident Manager
 
 on:
@@ -69,12 +70,37 @@ jobs:
             https://raw.githubusercontent.com/cc0a/cicd-docker-python-issue-tracker-app/main/cloud-incident-manager/docker-compose.yml \
             -o docker-compose.yml
 
+          echo "Pulling application image..."
           docker compose pull
+
+          echo "Starting application..."
           docker compose up -d --remove-orphans
+
           docker compose ps
 
-          curl --fail --retry 10 --retry-delay 5 \
-            "http://127.0.0.1:\$APP_PORT/api/health/"
+          echo "Waiting for application health endpoint..."
+          healthy=0
+
+          for attempt in \$(seq 1 36); do
+            if curl --connect-timeout 3 --max-time 5 \
+              --silent --show-error --fail \
+              "http://127.0.0.1:\$APP_PORT/api/health/"; then
+              echo
+              echo "Application health check passed on attempt \$attempt."
+              healthy=1
+              break
+            fi
+
+            echo "Health check attempt \$attempt/36 failed; retrying in 5 seconds..."
+            sleep 5
+          done
+
+          if [ "\$healthy" -ne 1 ]; then
+            echo "Application did not become healthy within 3 minutes."
+            docker compose ps
+            docker logs --tail 100 cloud-incident-manager || true
+            exit 1
+          fi
           SCRIPT
 
           jq -n --rawfile command /tmp/deploy-command.sh \
