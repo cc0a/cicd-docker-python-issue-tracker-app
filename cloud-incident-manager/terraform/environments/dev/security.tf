@@ -4,23 +4,10 @@ resource "random_integer" "app_port" {
   max = 60000
 }
 
-resource "aws_key_pair" "deployer" {
-  key_name   = "${var.project_name}-key"
-  public_key = file("/home/snow/.ssh/id_rsa.pub")
-}
-
 resource "aws_security_group" "app" {
   name        = "${var.project_name}-sg"
   description = "Security group for application EC2 instance"
   vpc_id      = aws_vpc.main.id
-
-  ingress {
-    description = "SSH from approved IP"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = [var.ssh_ingress_cidr]
-  }
 
   dynamic "ingress" {
     for_each = var.app_ingress_cidr == "" ? [] : [var.app_ingress_cidr]
