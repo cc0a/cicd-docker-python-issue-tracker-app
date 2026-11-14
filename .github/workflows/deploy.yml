@@ -49,7 +49,7 @@ jobs:
         env:
           INSTANCE_ID: ${{ steps.tf.outputs.instance_id }}
           APP_PORT: ${{ steps.tf.outputs.app_port }}
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: latest
         shell: bash
         run: |
           set -euo pipefail
