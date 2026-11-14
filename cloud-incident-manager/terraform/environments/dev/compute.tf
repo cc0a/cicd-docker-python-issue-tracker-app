@@ -32,6 +32,7 @@ resource "aws_instance" "app" {
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
       git \
       docker.io \
+      docker-compose-v2 \
       python3 \
       python3-pip \
       python3-venv
