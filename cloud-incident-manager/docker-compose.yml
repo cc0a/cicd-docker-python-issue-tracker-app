@@ -1,22 +1,14 @@
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-
+    image: ghcr.io/cc0a/cicd-docker-python-issue-tracker-app:${IMAGE_TAG:-latest}
     container_name: cloud-incident-manager
-
     ports:
       - "${APP_PORT:-8000}:8000"
-
     environment:
       DATABASE_URL: sqlite:////app/data/incidents.db
-
     volumes:
       - incident_data:/app/data
-
     restart: unless-stopped
-
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost:8000/api/health/"]
       interval: 30s
