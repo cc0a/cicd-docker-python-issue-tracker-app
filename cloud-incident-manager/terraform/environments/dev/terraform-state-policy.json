@@ -4,7 +4,7 @@
     {
       "Effect": "Allow",
       "Action": "s3:ListBucket",
-      "Resource": "arn:aws:s3:::cloud-incident-manager-tfstate-795734304267",
+      "Resource": "arn:aws:s3:::REPLACE_WITH_YOUR_UNIQUE_BUCKET_NAME",
       "Condition": {
         "StringLike": {
           "s3:prefix": [
@@ -20,7 +20,7 @@
         "s3:GetObject",
         "s3:PutObject"
       ],
-      "Resource": "arn:aws:s3:::cloud-incident-manager-tfstate-795734304267/cloud-incident-manager/dev/terraform.tfstate"
+      "Resource": "arn:aws:s3:::REPLACE_WITH_YOUR_UNIQUE_BUCKET_NAME/cloud-incident-manager/dev/terraform.tfstate"
     },
     {
       "Effect": "Allow",
@@ -29,7 +29,7 @@
         "s3:PutObject",
         "s3:DeleteObject"
       ],
-      "Resource": "arn:aws:s3:::cloud-incident-manager-tfstate-795734304267/cloud-incident-manager/dev/terraform.tfstate.tflock"
+      "Resource": "arn:aws:s3:::REPLACE_WITH_YOUR_UNIQUE_BUCKET_NAME/cloud-incident-manager/dev/terraform.tfstate.tflock"
     }
   ]
 }

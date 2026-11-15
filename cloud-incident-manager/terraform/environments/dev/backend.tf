@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket       = "cloud-incident-manager-tfstate-795734304267"
+    bucket       = "REPLACE_WITH_YOUR_UNIQUE_BUCKET_NAME"
     key          = "cloud-incident-manager/dev/terraform.tfstate"
     region       = "us-east-1"
     encrypt      = true
