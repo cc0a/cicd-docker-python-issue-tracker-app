@@ -5,9 +5,8 @@ services:
     ports:
       - "${APP_PORT:-8000}:8000"
     environment:
-      DATABASE_URL: sqlite:////app/data/incidents.db
-    volumes:
-      - incident_data:/app/data
+      DATABASE_SECRET_ARN: ${DATABASE_SECRET_ARN:?DATABASE_SECRET_ARN must be set}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost:8000/api/health/"]
@@ -15,6 +14,3 @@ services:
       timeout: 10s
       retries: 3
       start_period: 15s
-
-volumes:
-  incident_data:

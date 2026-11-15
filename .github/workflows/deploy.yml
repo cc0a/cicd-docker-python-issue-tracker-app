@@ -41,30 +41,46 @@ jobs:
       - name: Read infrastructure outputs
         id: tf
         working-directory: ${{ env.TF_WORKING_DIR }}
+        shell: bash
         run: |
+          set -euo pipefail
+
           terraform init -input=false
+
           echo "instance_id=$(terraform output -raw instance_id)" >> "$GITHUB_OUTPUT"
           echo "app_port=$(terraform output -raw app_port)" >> "$GITHUB_OUTPUT"
+          echo "database_secret_arn=$(terraform output -raw database_secret_arn)" >> "$GITHUB_OUTPUT"
 
       - name: Deploy through SSM
         env:
           INSTANCE_ID: ${{ steps.tf.outputs.instance_id }}
           APP_PORT: ${{ steps.tf.outputs.app_port }}
+          DATABASE_SECRET_ARN: ${{ steps.tf.outputs.database_secret_arn }}
+          AWS_REGION: ${{ env.AWS_REGION }}
           IMAGE_TAG: latest
         shell: bash
         run: |
           set -euo pipefail
 
+          if [[ -z "$INSTANCE_ID" || -z "$DATABASE_SECRET_ARN" ]]; then
+            echo "Missing EC2 instance ID or database secret ARN."
+            exit 1
+          fi
+
           cat > /tmp/deploy-command.sh <<SCRIPT
           set -eu
+
           export APP_PORT="${APP_PORT}"
           export IMAGE_TAG="${IMAGE_TAG}"
+          export DATABASE_SECRET_ARN="${DATABASE_SECRET_ARN}"
+          export AWS_REGION="${AWS_REGION}"
 
           mkdir -p /opt/cloud-incident-manager
           cd /opt/cloud-incident-manager
 
-          printf 'APP_PORT=%s\\nIMAGE_TAG=%s\\n' \
-            "\$APP_PORT" "\$IMAGE_TAG" > .env
+          umask 077
+          printf 'APP_PORT=%s\\nIMAGE_TAG=%s\\nDATABASE_SECRET_ARN=%s\\nAWS_REGION=%s\\n' \
+            "\$APP_PORT" "\$IMAGE_TAG" "\$DATABASE_SECRET_ARN" "\$AWS_REGION" > .env
 
           curl -fsSL \
             https://raw.githubusercontent.com/cc0a/cicd-docker-python-issue-tracker-app/main/cloud-incident-manager/docker-compose.yml \
@@ -102,6 +118,10 @@ jobs:
             exit 1
           fi
           SCRIPT
+
+          echo "===== SSM DEPLOYMENT SCRIPT ====="
+          cat /tmp/deploy-command.sh
+          echo "================================="
 
           jq -n --rawfile command /tmp/deploy-command.sh \
             '{commands: [$command]}' > /tmp/ssm-parameters.json

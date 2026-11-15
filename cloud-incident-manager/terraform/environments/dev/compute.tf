@@ -12,8 +12,9 @@ resource "aws_instance" "app" {
   iam_instance_profile = aws_iam_instance_profile.app.name
 
   metadata_options {
-    http_endpoint = "enabled"
-    http_tokens   = "required"
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 2
   }
 
   root_block_device {
@@ -51,6 +52,7 @@ resource "aws_instance" "app" {
 
   depends_on = [
     aws_iam_role_policy_attachment.ssm,
+    aws_iam_role_policy.database_secret_access,
     aws_route_table_association.public
   ]
 }

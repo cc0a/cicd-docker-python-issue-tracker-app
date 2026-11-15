@@ -33,3 +33,8 @@ output "app_port" {
   description = "Random application port"
   value       = random_integer.app_port.result
 }
+
+output "database_secret_arn" {
+  description = "ARN of the RDS-managed database credentials secret"
+  value       = aws_db_instance.database.master_user_secret[0].secret_arn
+}

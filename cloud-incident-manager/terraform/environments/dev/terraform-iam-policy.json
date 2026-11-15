@@ -1,7 +1,9 @@
+
 {
   "Version": "2012-10-17",
   "Statement": [
     {
+      "Sid": "ManageProjectEC2Role",
       "Effect": "Allow",
       "Action": [
         "iam:CreateRole",
@@ -13,19 +15,106 @@
         "iam:ListRoleTags",
         "iam:AttachRolePolicy",
         "iam:DetachRolePolicy",
-        "iam:ListAttachedRolePolicies",
+        "iam:ListAttachedRolePolicies"
+      ],
+      "Resource": "arn:aws:iam::REPLACE_WITH_AWS_ACCOUNT_ID:role/cloud-incident-manager-ssm-role",
+      "Condition": {
+        "ArnEquals": {
+          "iam:PolicyARN": "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+        }
+      }
+    },
+    {
+      "Sid": "ManageProjectInstanceProfile",
+      "Effect": "Allow",
+      "Action": [
         "iam:CreateInstanceProfile",
         "iam:GetInstanceProfile",
         "iam:DeleteInstanceProfile",
         "iam:AddRoleToInstanceProfile",
         "iam:RemoveRoleFromInstanceProfile",
-        "iam:ListInstanceProfilesForRole",
-        "iam:ListInstanceProfileTags",
-        "iam:ListRoles",
-        "iam:ListInstanceProfiles",
+        "iam:ListInstanceProfileTags"
+      ],
+      "Resource": "arn:aws:iam::REPLACE_WITH_AWS_ACCOUNT_ID:instance-profile/cloud-incident-manager-instance-profile"
+    },
+    {
+      "Sid": "ReadRequiredAWSManagedPolicy",
+      "Effect": "Allow",
+      "Action": [
         "iam:GetPolicy",
         "iam:GetPolicyVersion",
         "iam:ListPolicyVersions"
+      ],
+      "Resource": "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+    },
+    {
+      "Sid": "IAMDiscovery",
+      "Effect": "Allow",
+      "Action": [
+        "iam:ListRoles",
+        "iam:ListInstanceProfiles",
+        "iam:ListInstanceProfilesForRole"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ManageProjectEC2Role",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateRole",
+        "iam:GetRole",
+        "iam:DeleteRole",
+        "iam:UpdateAssumeRolePolicy",
+        "iam:TagRole",
+        "iam:UntagRole",
+        "iam:ListRoleTags",
+        "iam:AttachRolePolicy",
+        "iam:DetachRolePolicy",
+        "iam:ListAttachedRolePolicies"
+      ],
+      "Resource": "arn:aws:iam::REPLACE_WITH_AWS_ACCOUNT_ID:role/cloud-incident-manager-ssm-role",
+      "Condition": {
+        "ArnEquals": {
+          "iam:PolicyARN": "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+        }
+      }
+    },
+    {
+      "Sid": "ManageProjectInstanceProfile",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateInstanceProfile",
+        "iam:GetInstanceProfile",
+        "iam:DeleteInstanceProfile",
+        "iam:AddRoleToInstanceProfile",
+        "iam:RemoveRoleFromInstanceProfile",
+        "iam:ListInstanceProfileTags"
+      ],
+      "Resource": "arn:aws:iam::REPLACE_WITH_AWS_ACCOUNT_ID:instance-profile/cloud-incident-manager-instance-profile"
+    },
+    {
+      "Sid": "ReadRequiredAWSManagedPolicy",
+      "Effect": "Allow",
+      "Action": [
+        "iam:GetPolicy",
+        "iam:GetPolicyVersion",
+        "iam:ListPolicyVersions"
+      ],
+      "Resource": "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+    },
+    {
+      "Sid": "IAMDiscovery",
+      "Effect": "Allow",
+      "Action": [
+        "iam:ListRoles",
+        "iam:ListInstanceProfiles",
+        "iam:ListInstanceProfilesForRole"
       ],
       "Resource": "*"
     }
