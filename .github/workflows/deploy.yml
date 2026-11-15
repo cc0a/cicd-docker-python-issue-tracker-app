@@ -94,34 +94,30 @@ jobs:
 
           docker compose ps
 
-          echo "Waiting for application health endpoint..."
+          echo "Waiting for database connectivity..."
           healthy=0
 
           for attempt in \$(seq 1 36); do
             if curl --connect-timeout 3 --max-time 5 \
               --silent --show-error --fail \
-              "http://127.0.0.1:\$APP_PORT/api/health/"; then
+              "http://127.0.0.1:\$APP_PORT/api/health/database"; then
               echo
-              echo "Application health check passed on attempt \$attempt."
+              echo "Database health check passed on attempt \$attempt."
               healthy=1
               break
             fi
 
-            echo "Health check attempt \$attempt/36 failed; retrying in 5 seconds..."
+            echo "Database check attempt \$attempt/36 failed; retrying in 5 seconds..."
             sleep 5
           done
 
           if [ "\$healthy" -ne 1 ]; then
-            echo "Application did not become healthy within 3 minutes."
+            echo "Application or database did not become healthy within 3 minutes."
             docker compose ps
             docker logs --tail 100 cloud-incident-manager || true
             exit 1
           fi
           SCRIPT
-
-          echo "===== SSM DEPLOYMENT SCRIPT ====="
-          cat /tmp/deploy-command.sh
-          echo "================================="
 
           jq -n --rawfile command /tmp/deploy-command.sh \
             '{commands: [$command]}' > /tmp/ssm-parameters.json

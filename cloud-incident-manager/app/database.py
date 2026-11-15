@@ -1,4 +1,6 @@
+
 import json
+from functools import lru_cache
 
 import boto3
 from sqlalchemy import create_engine
@@ -8,7 +10,21 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 from app.config import settings
 
 
+class Base(DeclarativeBase):
+    pass
+
+
 def get_database_url():
+    # Local development and CI use the supplied database URL.
+    if settings.database_url:
+        return settings.database_url
+
+    # Production retrieves credentials from AWS Secrets Manager.
+    if not settings.database_secret_arn:
+        raise RuntimeError(
+            "Set DATABASE_URL or DATABASE_SECRET_ARN to configure the database."
+        )
+
     client = boto3.client(
         "secretsmanager",
         region_name=settings.aws_region,
@@ -30,26 +46,25 @@ def get_database_url():
     )
 
 
-database_url = get_database_url()
-
-engine = create_engine(
-    database_url,
-    pool_pre_ping=True,
-)
-
-SessionLocal = sessionmaker(
-    bind=engine,
-    autoflush=False,
-    autocommit=False,
-)
+@lru_cache(maxsize=1)
+def get_engine():
+    return create_engine(
+        get_database_url(),
+        pool_pre_ping=True,
+    )
 
 
-class Base(DeclarativeBase):
-    pass
+@lru_cache(maxsize=1)
+def get_session_factory():
+    return sessionmaker(
+        bind=get_engine(),
+        autoflush=False,
+        autocommit=False,
+    )
 
 
 def get_db():
-    db = SessionLocal()
+    db = get_session_factory()()
 
     try:
         yield db
